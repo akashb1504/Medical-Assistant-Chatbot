@@ -1,22 +1,16 @@
 import os
 import time
-import requests
-
 from pathlib import Path
-
 from dotenv import load_dotenv
-
 from tqdm.auto import tqdm
-
 from pinecone import (
     Pinecone,
     ServerlessSpec
 )
-
+from fastembed import TextEmbedding
 from langchain_community.document_loaders import (
     PyPDFLoader
 )
-
 from langchain.text_splitter import (
     RecursiveCharacterTextSplitter
 )
@@ -33,21 +27,6 @@ PINECONE_ENV = "us-east-1"
 
 PINECONE_INDEX_NAME = "medicalindex"
 
-HF_API_KEY = os.getenv(
-    "HUGGINGFACE_API_KEY"
-)
-
-HF_API_URL = (
-    "https://api-inference.huggingface.co/"
-    "pipeline/feature-extraction/"
-    "sentence-transformers/all-MiniLM-L6-v2"
-)
-
-headers = {
-    "Authorization": f"Bearer {HF_API_KEY}"
-}
-
-
 UPLOAD_DIR = "./uploaded_docs"
 
 os.makedirs(
@@ -56,18 +35,9 @@ os.makedirs(
 )
 
 
-def get_embedding(text):
-
-    response = requests.post(
-        HF_API_URL,
-        headers=headers,
-        json={"inputs": text},
-        timeout=30
-    )
-
-    response.raise_for_status()
-
-    return response.json()
+embedding_model = TextEmbedding(
+    model_name="BAAI/bge-small-en-v1.5"
+)
 
 
 pc = Pinecone(
@@ -164,13 +134,10 @@ def load_vectorstore(uploaded_files):
             f"Embedding {len(texts)} chunks..."
         )
 
-        embeddings = []
-
-        for text in tqdm(texts):
-
-            embedding = get_embedding(text)
-
-            embeddings.append(embedding)
+        embeddings = [
+            embedding.tolist()
+            for embedding in embedding_model.embed(texts)
+        ]
 
         vectors = list(
             zip(

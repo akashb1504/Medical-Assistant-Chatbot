@@ -17,4 +17,5 @@ tqdm==4.66.2
 loguru==0.7.2
 
 pypdf==4.1.0
-huggingface-hub==0.23.0
+fastembed==0.3.6
+onnxruntime==1.18.0

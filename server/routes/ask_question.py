@@ -9,42 +9,21 @@ from langchain.schema import BaseRetriever
 
 from pinecone import Pinecone
 
+from fastembed import TextEmbedding
+
 from typing import List
 
 from logger import logger
 
 import os
-import requests
 
 
 router = APIRouter()
 
 
-HF_API_KEY = os.getenv("HUGGINGFACE_API_KEY")
-
-HF_API_URL = (
-    "https://api-inference.huggingface.co/"
-    "pipeline/feature-extraction/"
-    "sentence-transformers/all-MiniLM-L6-v2"
+embedding_model = TextEmbedding(
+    model_name="BAAI/bge-small-en-v1.5"
 )
-
-headers = {
-    "Authorization": f"Bearer {HF_API_KEY}"
-}
-
-
-def get_embedding(text: str):
-
-    response = requests.post(
-        HF_API_URL,
-        headers=headers,
-        json={"inputs": text},
-        timeout=30
-    )
-
-    response.raise_for_status()
-
-    return response.json()
 
 
 pc = Pinecone(
@@ -77,7 +56,9 @@ async def ask_question(
 
         logger.info(f"user query: {question}")
 
-        embedded_query = get_embedding(question)
+        embedded_query = list(
+            embedding_model.embed([question])
+        )[0].tolist()
 
         res = index.query(
             vector=embedded_query,
