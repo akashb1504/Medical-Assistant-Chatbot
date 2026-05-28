@@ -4,7 +4,7 @@ from modules.llm import get_llm_chain
 from modules.query_handlers import query_chain
 from langchain_core.documents import Document
 from langchain.schema import BaseRetriever
-from langchain_community.embeddings import HuggingFaceInferenceAPIEmbeddings
+from langchain_community.embeddings import HuggingFaceHubEmbeddings
 from pinecone import Pinecone
 from typing import List
 from logger import logger
@@ -21,9 +21,9 @@ async def ask_question(question: str = Form(...)):
         # Embed model + Pinecone setup
         pc = Pinecone(api_key=os.environ["PINECONE_API_KEY"])
         index = pc.Index(os.environ["PINECONE_INDEX_NAME"])
-        embed_model = HuggingFaceInferenceAPIEmbeddings(
-        api_key=os.environ["HUGGINGFACE_API_KEY"],
-        model_name="sentence-transformers/all-MiniLM-L6-v2")
+        embed_model = HuggingFaceHubEmbeddings(
+        huggingfacehub_api_token=os.getenv("HUGGINGFACE_API_KEY"),
+        model="sentence-transformers/all-MiniLM-L6-v2")
         embedded_query = embed_model.embed_query(question)
         res = index.query(vector=embedded_query, top_k=3, include_metadata=True)
 

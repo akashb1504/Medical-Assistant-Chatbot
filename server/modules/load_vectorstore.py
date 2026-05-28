@@ -6,7 +6,7 @@ from tqdm.auto import tqdm
 from pinecone import Pinecone, ServerlessSpec
 from langchain_community.document_loaders import PyPDFLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain_community.embeddings import HuggingFaceInferenceAPIEmbeddings
+from langchain_community.embeddings import HuggingFaceHubEmbeddings
 
 load_dotenv()
 
@@ -41,9 +41,9 @@ index=pc.Index(PINECONE_INDEX_NAME)
 
 # load,split,embed and upsert pdf docs content
 def load_vectorstore(uploaded_files):
-    embed_model = HuggingFaceInferenceAPIEmbeddings(
-    api_key=os.getenv("HUGGINGFACE_API_KEY"),
-    model_name="sentence-transformers/all-MiniLM-L6-v2")
+    embed_model = HuggingFaceHubEmbeddings(
+    huggingfacehub_api_token=os.getenv("HUGGINGFACE_API_KEY"),
+    model="sentence-transformers/all-MiniLM-L6-v2")
     file_paths = []
 
     # 1. Upload files and save to disk
