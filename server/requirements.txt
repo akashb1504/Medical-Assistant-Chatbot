@@ -17,6 +17,6 @@ tqdm==4.66.2
 loguru==0.7.2
 
 pypdf==4.1.0
-torch==2.2.2+cpu
+torch==2.2.2
 sentence-transformers==2.7.0
 transformers==4.40.2
