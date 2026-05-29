@@ -1,6 +1,6 @@
 # AI Medical Assistant Chatbot
 
-![Medical Assistant Chatbot](chatbot-ui.jpeg)
+![Medical Assistant Chatbot](chatbot-ui.jpg)
 
 An end-to-end AI-powered Medical Assistant Chatbot built using FastAPI, Streamlit, LangChain, Pinecone, Groq, and FastEmbed.
 
