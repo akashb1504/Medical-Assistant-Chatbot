@@ -1,6 +1,6 @@
 # AI Medical Assistant Chatbot
 
-![Medical Assistant Chatbot](chatbot-ui.png)
+![Medical Assistant Chatbot](chatbot-ui.jpeg)
 
 An end-to-end AI-powered Medical Assistant Chatbot built using FastAPI, Streamlit, LangChain, Pinecone, Groq, and FastEmbed.
 
@@ -10,16 +10,11 @@ The application allows users to upload medical PDF documents and ask medical que
 
 # Live Demo
 
-Frontend (Streamlit)
+Streamlit
 
 ```text
 https://medical-assistant-chat-bot.streamlit.app/
 ```
-
-Backend API (Render)
-
-```text
-https://medical-assistant-chatbot-1.onrender.com
 ```
 
 GitHub Repository
@@ -66,7 +61,7 @@ https://github.com/akashb1504/Medical-Assistant-Chatbot.git
 
 ---
 
-# Local Reproduction Steps
+# Quick Setup
 
 ## 1. Clone Repository
 
@@ -98,12 +93,6 @@ uv venv
 .venv\Scripts\activate
 ```
 
-### Linux / Mac
-
-```bash
-source .venv/bin/activate
-```
-
 ## Install Dependencies
 
 ```bash
@@ -122,12 +111,6 @@ PINECONE_INDEX_NAME=
 
 ```bash
 uvicorn main:app --reload --port 8000
-```
-
-Backend runs on:
-
-```text
-http://127.0.0.1:8000
 ```
 
 ---
@@ -154,11 +137,6 @@ uv venv
 .venv\Scripts\activate
 ```
 
-### Linux / Mac
-
-```bash
-source .venv/bin/activate
-```
 
 ## Install Dependencies
 
@@ -172,20 +150,4 @@ uv pip install -r requirements.txt
 streamlit run app.py
 ```
 
-Frontend runs on:
 
-```text
-http://localhost:8501
-```
-
----
-
-# Project Summary
-
-Built an end-to-end AI Medical Assistant Chatbot using FastAPI, Streamlit, LangChain, Pinecone, Groq, and FastEmbed. Implemented Retrieval-Augmented Generation (RAG) with PDF upload, semantic search, vector embeddings, and AI-generated responses. Optimized deployment for free-tier cloud hosting and deployed the application using Render and Streamlit Cloud.
-
----
-
-# Author
-
-Akash B
