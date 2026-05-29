@@ -15,15 +15,6 @@ Streamlit
 ```text
 https://medical-assistant-chat-bot.streamlit.app/
 ```
-```
-
-GitHub Repository
-
-```text
-https://github.com/akashb1504/Medical-Assistant-Chatbot.git
-```
-
----
 
 # Overview
 
