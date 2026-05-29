@@ -1,10 +1,6 @@
-Your reproduction steps are actually better because they match your real project structure with separate `server` and `client` setup.
-
-Use this cleaned and professional version in your README:
-
 # AI Medical Assistant Chatbot
 
-![Medical Assistant Chatbot](./assets/chatbot-ui.png)
+![Medical Assistant Chatbot](chatbot-ui.png)
 
 An end-to-end AI-powered Medical Assistant Chatbot built using FastAPI, Streamlit, LangChain, Pinecone, Groq, and FastEmbed.
 
