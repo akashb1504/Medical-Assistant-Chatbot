@@ -1,16 +1,26 @@
 import os
+
 import time
+
+import gc
+
 from pathlib import Path
+
 from dotenv import load_dotenv
+
 from tqdm.auto import tqdm
+
 from pinecone import (
     Pinecone,
     ServerlessSpec
 )
-from fastembed import TextEmbedding
+
+from modules.embedding import embedding_model
+
 from langchain_community.document_loaders import (
     PyPDFLoader
 )
+
 from langchain.text_splitter import (
     RecursiveCharacterTextSplitter
 )
@@ -29,14 +39,14 @@ PINECONE_INDEX_NAME = "medicalindex"
 
 UPLOAD_DIR = "./uploaded_docs"
 
+MAX_CHUNKS = 50
+
+EMBED_BATCH_SIZE = 8
+
+
 os.makedirs(
     UPLOAD_DIR,
     exist_ok=True
-)
-
-
-embedding_model = TextEmbedding(
-    model_name="BAAI/bge-small-en-v1.5"
 )
 
 
@@ -108,58 +118,70 @@ def load_vectorstore(uploaded_files):
             documents
         )
 
-        texts = [
-            chunk.page_content
-            for chunk in chunks
-        ]
-
-        metadatas = []
-
-        for chunk in chunks:
-
-            metadata = chunk.metadata
-
-            metadata["text"] = (
-                chunk.page_content
-            )
-
-            metadatas.append(metadata)
-
-        ids = [
-            f"{Path(file_path).stem}-{i}"
-            for i in range(len(chunks))
-        ]
+        chunks = chunks[:MAX_CHUNKS]
 
         print(
-            f"Embedding {len(texts)} chunks..."
+            f"Processing {len(chunks)} chunks..."
         )
-
-        embeddings = [
-            embedding.tolist()
-            for embedding in embedding_model.embed(texts)
-        ]
-
-        vectors = list(
-            zip(
-                ids,
-                embeddings,
-                metadatas
-            )
-        )
-
-        print("Uploading to Pinecone...")
-
-        batch_size = 50
 
         for i in tqdm(
-            range(0, len(vectors), batch_size)
+            range(0, len(chunks), EMBED_BATCH_SIZE)
         ):
 
-            batch = vectors[
-                i:i + batch_size
+            batch_chunks = chunks[
+                i:i + EMBED_BATCH_SIZE
             ]
 
-            index.upsert(vectors=batch)
+            texts = [
+                chunk.page_content
+                for chunk in batch_chunks
+            ]
+
+            embeddings = [
+                embedding.tolist()
+                for embedding in embedding_model.embed(
+                    texts
+                )
+            ]
+
+            vectors = []
+
+            for j, chunk in enumerate(
+                batch_chunks
+            ):
+
+                metadata = chunk.metadata
+
+                metadata["text"] = (
+                    chunk.page_content
+                )
+
+                vector_id = (
+                    f"{Path(file_path).stem}-{i+j}"
+                )
+
+                vectors.append(
+                    (
+                        vector_id,
+                        embeddings[j],
+                        metadata
+                    )
+                )
+
+            index.upsert(
+                vectors=vectors
+            )
+
+            del texts
+            del embeddings
+            del vectors
+
+            gc.collect()
+
+        del documents
+        del chunks
+
+        gc.collect()
 
         print(
             f"Upload complete for {file_path}"

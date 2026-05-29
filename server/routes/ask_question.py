@@ -6,13 +6,13 @@ from modules.llm import get_llm_chain
 
 from modules.query_handlers import query_chain
 
+from modules.embedding import embedding_model
+
 from langchain_core.documents import Document
 
 from langchain.schema import BaseRetriever
 
 from pinecone import Pinecone
-
-from fastembed import TextEmbedding
 
 from typing import List
 
@@ -22,22 +22,6 @@ import os
 
 
 router = APIRouter()
-
-
-embedding_model = None
-
-
-def get_embedding_model():
-
-    global embedding_model
-
-    if embedding_model is None:
-
-        embedding_model = TextEmbedding(
-            model_name="BAAI/bge-small-en-v1.5"
-        )
-
-    return embedding_model
 
 
 pc = Pinecone(
@@ -72,10 +56,8 @@ async def ask_question(
             f"user query: {question}"
         )
 
-        model = get_embedding_model()
-
         embedded_query = list(
-            model.embed([question])
+            embedding_model.embed([question])
         )[0].tolist()
 
         res = index.query(
