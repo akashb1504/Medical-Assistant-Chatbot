@@ -1,7 +1,6 @@
-
 __pycache__
-
-
 .venv
 .env
 test.py
+main.py
+server/.env

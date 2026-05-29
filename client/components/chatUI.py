@@ -24,10 +24,10 @@ def render_chat():
             answer=data["response"]
             sources=data.get("sources",[])
             st.chat_message("assistant").markdown(answer)
-            if sources:
-                st.markdown("📄 **Sources: **")
-                for src in sources:
-                    st.markdown(f"- `{src}`")
+            # if sources:
+            #     st.markdown("📄 **Sources: **")
+            #     for src in sources:
+            #         st.markdown(f"- `{src}`")
             st.session_state.messages.append({"role":"assistant","content":answer})
         else:
             st.error(f"Error: {response.text}")
